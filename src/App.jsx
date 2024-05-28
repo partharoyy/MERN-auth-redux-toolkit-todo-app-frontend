@@ -4,6 +4,7 @@ import { fetchTodos } from './redux/slices/todo.js';
 import Todo from './components/todo/Todo';
 import addIcon from './assets/addIcon.png';
 import mainCloseIcon from './assets/mainCloseIcon.png';
+import logo from './assets/logo.png';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,17 +21,19 @@ const App = () => {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div className='min-h-screen flex justify-center items-center flex-col relative'>
-          <h1 className='mb-6 text-5xl font-bold absolute top-0 left-0 p-8'>Todo..</h1>
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 '>
+        <div className='min-h-screen flex justify-center items-center flex-col relative p-4'>
+          <img className='h-[10rem] w-[10rem] absolute top-2 left-2 object-cover' src={logo} alt='logo' />
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 '>
             {addTodo && <Todo addTodo />}
-            {todos &&
-              todos.length > 0 &&
+            {todos.length > 0 ? (
               todos?.map((todo) => (
                 <div key={todo?._id}>
                   <Todo todo={todo} />
                 </div>
-              ))}
+              ))
+            ) : (
+              <h1 className='text-4xl '>{!addTodo && 'Please add a todo🙂'}</h1>
+            )}
           </div>
           {addTodo && (
             <img

@@ -18,21 +18,27 @@ function Todo({ todo, addTodo }) {
     dispatch(deleteTodos(id));
   };
 
-  const handleOnChange = (e) => {
+  const handleTitleDescriptionChange = (e) => {
     const { name, value } = e.target;
 
     if (name === 'title') {
       setTitle(value);
     } else if (name === 'description') {
       setDescription(value);
-    } else if (name === 'isCompleted') {
-      setIsCompleted(e.target.checked);
     }
   };
 
+  const handleCheckboxChange = (e) => {
+    const { checked } = e.target;
+    setIsCompleted(checked);
+    dispatch(editTodos({ id: todo._id, updatedTodo: { ...todo, isCompleted: checked } }));
+  };
+
   const handleEditSave = () => {
+    if (title === '' || description === '') return;
+
     const updatedTodo = {
-      ...todo,
+      _id: todo._id,
       title,
       description,
       isCompleted,
@@ -42,6 +48,8 @@ function Todo({ todo, addTodo }) {
   };
 
   const handleNewSave = () => {
+    if (title === '' || description === '') return;
+
     const newTodo = {
       title,
       description,
@@ -56,7 +64,7 @@ function Todo({ todo, addTodo }) {
   };
 
   return (
-    <div className='rounded-md bg-orange-400 flex flex-col items-center p-10 relative  '>
+    <div className='rounded-md bg-orange-400 flex flex-col items-center p-10 relative flex-wrap h-[13rem] min-w-[14rem] overflow-auto'>
       {isEditing || addTodo ? (
         <img
           src={saveIcon}
@@ -65,12 +73,21 @@ function Todo({ todo, addTodo }) {
           onClick={isEditing ? handleEditSave : handleNewSave}
         />
       ) : (
-        <img
-          src={editIcon}
-          alt='edit'
-          className='h-5 w-5 absolute top-3 right-9 hover:cursor-pointer'
-          onClick={handleEditClick}
-        />
+        <div>
+          <input
+            type='checkbox'
+            name='isCompleted'
+            checked={isCompleted}
+            onChange={handleCheckboxChange}
+            className=' absolute h-5 w-5 top-3 right-13 cursor-pointer'
+          />
+          <img
+            src={editIcon}
+            alt='edit'
+            className='h-5 w-5 absolute top-3 right-9 hover:cursor-pointer'
+            onClick={handleEditClick}
+          />
+        </div>
       )}
 
       {!addTodo && (
@@ -87,22 +104,22 @@ function Todo({ todo, addTodo }) {
           name='title'
           value={title}
           placeholder='title'
-          onChange={handleOnChange}
+          onChange={handleTitleDescriptionChange}
           className='bg-orange-400 outline-none text-xl font-bold uppercase mb-4'
         />
       ) : (
-        <p className='text-xl font-bold uppercase mb-4'>{todo?.title}</p>
+        <p className={`text-xl font-bold uppercase mb-4 ${isCompleted ? 'line-through' : ''}`}>{todo?.title}</p>
       )}
       {isEditing || addTodo ? (
         <input
           name='description'
           value={description}
           placeholder='description'
-          onChange={handleOnChange}
-          className='bg-orange-400 outline-none text-lg uppercase'
+          onChange={handleTitleDescriptionChange}
+          className='bg-orange-400 outline-none text-lg uppercase '
         />
       ) : (
-        <p className='text-lg uppercase'>{todo?.description}</p>
+        <p className={`text-lg uppercase ${isCompleted ? 'line-through' : ''}`}>{todo?.description}</p>
       )}
     </div>
   );
