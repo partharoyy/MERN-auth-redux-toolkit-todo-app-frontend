@@ -1,57 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchTodos } from './redux/slices/todo.js';
-import Todo from './components/todo/Todo';
-import addIcon from './assets/addIcon.png';
-import mainCloseIcon from './assets/mainCloseIcon.png';
-import logo from './assets/logo.png';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import TodoList from './components/todo-list/TodoList.jsx';
+import Signup from './components/sign-up/Signup.jsx';
+import Signin from './components/sign-in/Signin.jsx';
+import ProtectedRoute from './components/protected-route/ProtectedRoute.jsx';
 
 const App = () => {
-  const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
-  const isLoading = useSelector((state) => state.isLoading);
-  const [addTodo, setAddTodo] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchTodos());
-  }, [dispatch]);
-
   return (
-    <div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className='min-h-screen flex justify-center items-center flex-col relative p-4'>
-          <img className='h-[10rem] w-[10rem] absolute top-2 left-2 object-cover' src={logo} alt='logo' />
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 '>
-            {addTodo && <Todo addTodo />}
-            {todos.length > 0 ? (
-              todos?.map((todo) => (
-                <div key={todo?._id}>
-                  <Todo todo={todo} />
-                </div>
-              ))
-            ) : (
-              <h1 className='text-4xl '>{!addTodo && 'Please add a todo🙂'}</h1>
-            )}
-          </div>
-          {addTodo && (
-            <img
-              src={mainCloseIcon}
-              alt='discard todo'
-              onClick={() => setAddTodo(false)}
-              className=' absolute h-[3.1rem] w-[3.1rem] bottom-[7%] right-[11%] cursor-pointer'
-            />
-          )}
-          <img
-            src={addIcon}
-            alt='add todo'
-            onClick={() => setAddTodo(true)}
-            className=' absolute h-[4rem] w-[4rem] bottom-[6%] right-[5%] cursor-pointer'
-          />
-        </div>
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={<ProtectedRoute element={<TodoList />} />} />
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/signin' element={<Signin />} />
+        <Route
+          path='*'
+          element={
+            <div className='flex justify-center items-center min-h-screen text-4xl font-bold'>404 Not Found</div>
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 
